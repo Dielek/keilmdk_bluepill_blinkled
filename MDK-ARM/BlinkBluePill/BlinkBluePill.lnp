@@ -1,0 +1,23 @@
+--cpu Cortex-M3
+"blinkbluepill\startup_stm32f103xb.o"
+"blinkbluepill\main.o"
+"blinkbluepill\stm32f1xx_it.o"
+"blinkbluepill\stm32f1xx_hal_msp.o"
+"blinkbluepill\stm32f1xx_hal_gpio_ex.o"
+"blinkbluepill\stm32f1xx_hal_tim.o"
+"blinkbluepill\stm32f1xx_hal_tim_ex.o"
+"blinkbluepill\stm32f1xx_hal.o"
+"blinkbluepill\stm32f1xx_hal_rcc.o"
+"blinkbluepill\stm32f1xx_hal_rcc_ex.o"
+"blinkbluepill\stm32f1xx_hal_gpio.o"
+"blinkbluepill\stm32f1xx_hal_dma.o"
+"blinkbluepill\stm32f1xx_hal_cortex.o"
+"blinkbluepill\stm32f1xx_hal_pwr.o"
+"blinkbluepill\stm32f1xx_hal_flash.o"
+"blinkbluepill\stm32f1xx_hal_flash_ex.o"
+"blinkbluepill\stm32f1xx_hal_exti.o"
+"blinkbluepill\system_stm32f1xx.o"
+--strict --scatter "BlinkBluePill\BlinkBluePill.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "BlinkBluePill.map" -o BlinkBluePill\BlinkBluePill.axf
