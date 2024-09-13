@@ -96,6 +96,7 @@ int main(void)
   {
 		if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_15))
 		{
+			HAL_Delay(5);
 			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13|GPIO_PIN_14);
 		}
     /* USER CODE END WHILE */
