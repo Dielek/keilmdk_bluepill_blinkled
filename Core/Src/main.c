@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "app_gpio_init.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -26,7 +27,15 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+#define  DISP_7SEG			GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7
+#define  SEG_A					GPIO_PIN_0
+#define  SEG_B					GPIO_PIN_1
+#define  SEG_C					GPIO_PIN_2
+#define  SEG_D					GPIO_PIN_3
+#define  SEG_E					GPIO_PIN_4
+#define  SEG_F					GPIO_PIN_5
+#define  SEG_G					GPIO_PIN_6
+#define  SEG_PT					GPIO_PIN_7
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -47,9 +56,8 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void USR_Selchar_7seg(uint8_t digit);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -65,7 +73,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	uint8_t counter = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -85,7 +93,12 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+  /* Init app1 */
+	// USR_GPIO_Init();
+	
+	/* Init app2 */
+	USR_GPIO_7Seg_Init();
+	USR_GPIO_Pushes_init(GPIOC, GPIO_PIN_15, GPIO_PIN_14);
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -94,12 +107,55 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_15))
+		/* App1 */
+		/*
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
 		{
 			HAL_Delay(5);
 			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13|GPIO_PIN_14);
 		}
-    /* USER CODE END WHILE */
+		*/
+    
+		/* App2 */
+		
+		//HAL_GPIO_TogglePin(GPIOA, DISP_7SEG);
+		//HAL_Delay(1000);
+		
+		USR_Selchar_7seg(counter);
+		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15))
+		{
+			HAL_Delay(200);
+			if(counter >= 0 && counter < 9){
+				counter++;
+			}
+			else {
+				counter = 0;
+			}
+		}
+		else if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_14))
+		{
+			HAL_Delay(200);
+			if(counter > 0 && counter <= 9){
+				counter--;
+			}
+			else {
+				counter = 9;
+			}
+		}
+
+		/*
+		HAL_Delay(1000);
+		if(counter < 10)
+		{
+			counter++;
+		} 
+		else
+		{
+			counter = 0;
+		}
+		*/
+		
+		/* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
@@ -142,6 +198,57 @@ void SystemClock_Config(void)
   }
 }
 
+
+static void USR_Selchar_7seg(uint8_t digit)
+{
+	switch(digit)
+	{
+		case 0:
+			HAL_GPIO_WritePin(GPIOA, SEG_G | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F, GPIO_PIN_RESET);
+			break;
+		case 1:
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_D | SEG_E | SEG_F | SEG_G | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_B | SEG_C, GPIO_PIN_RESET);
+			break;
+		case 2:
+			HAL_GPIO_WritePin(GPIOA, SEG_C | SEG_F | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_D | SEG_E | SEG_G, GPIO_PIN_RESET);
+			break;
+		case 3:
+			HAL_GPIO_WritePin(GPIOA, SEG_E | SEG_F | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_C | SEG_D | SEG_G, GPIO_PIN_RESET);
+			break;
+		case 4:
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_D | SEG_E | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_B | SEG_C | SEG_F | SEG_G, GPIO_PIN_RESET);
+			break;
+		case 5:
+			HAL_GPIO_WritePin(GPIOA, SEG_B | SEG_E | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_C | SEG_D | SEG_F | SEG_G, GPIO_PIN_RESET);
+			break;
+		case 6:
+			HAL_GPIO_WritePin(GPIOA, SEG_B | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_C | SEG_D | SEG_E | SEG_F | SEG_G, GPIO_PIN_RESET);
+			break;
+		case 7:
+			HAL_GPIO_WritePin(GPIOA, SEG_D | SEG_E | SEG_F | SEG_G | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_C, GPIO_PIN_RESET);
+			break;
+		case 8:
+			HAL_GPIO_WritePin(GPIOA, SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F | SEG_G, GPIO_PIN_RESET);
+			break;
+		case 9:
+			HAL_GPIO_WritePin(GPIOA, SEG_E, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_C | SEG_D | SEG_F | SEG_G, GPIO_PIN_RESET);
+			break;
+		default:
+			HAL_GPIO_WritePin(GPIOA, DISP_7SEG, GPIO_PIN_SET);
+	}
+		
+}
+
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -178,7 +285,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+// static void 
 /* USER CODE END 4 */
 
 /**

@@ -3,6 +3,7 @@
 "blinkbluepill\main.o"
 "blinkbluepill\stm32f1xx_it.o"
 "blinkbluepill\stm32f1xx_hal_msp.o"
+"blinkbluepill\app_gpio_init.o"
 "blinkbluepill\stm32f1xx_hal_gpio_ex.o"
 "blinkbluepill\stm32f1xx_hal_tim.o"
 "blinkbluepill\stm32f1xx_hal_tim_ex.o"
