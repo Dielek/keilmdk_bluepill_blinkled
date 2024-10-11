@@ -58,6 +58,9 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 static void USR_Selchar_7seg(uint8_t digit);
+static void APP1();
+static void APP2();
+static void APP3();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -73,7 +76,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-	uint8_t counter = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -88,78 +91,11 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  /* Init app1 */
-	// USR_GPIO_Init();
-	
-	/* Init app2 */
-	USR_GPIO_7Seg_Init();
-	USR_GPIO_Pushes_init(GPIOC, GPIO_PIN_15, GPIO_PIN_14);
   /* USER CODE BEGIN 2 */
-
+	// App1();
+	// APP2();
+	APP3();
   /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-		/* App1 */
-		/*
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
-		{
-			HAL_Delay(5);
-			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13|GPIO_PIN_14);
-		}
-		*/
-    
-		/* App2 */
-		
-		//HAL_GPIO_TogglePin(GPIOA, DISP_7SEG);
-		//HAL_Delay(1000);
-		
-		USR_Selchar_7seg(counter);
-		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15))
-		{
-			HAL_Delay(200);
-			if(counter >= 0 && counter < 9){
-				counter++;
-			}
-			else {
-				counter = 0;
-			}
-		}
-		else if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_14))
-		{
-			HAL_Delay(200);
-			if(counter > 0 && counter <= 9){
-				counter--;
-			}
-			else {
-				counter = 9;
-			}
-		}
-
-		/*
-		HAL_Delay(1000);
-		if(counter < 10)
-		{
-			counter++;
-		} 
-		else
-		{
-			counter = 0;
-		}
-		*/
-		
-		/* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
 }
 
 /**
@@ -199,6 +135,11 @@ void SystemClock_Config(void)
 }
 
 
+/**
+  * @brief Function to show numbers and chars on a 7 segments display
+  * @param None
+  * @retval None
+  */
 static void USR_Selchar_7seg(uint8_t digit)
 {
 	switch(digit)
@@ -240,13 +181,183 @@ static void USR_Selchar_7seg(uint8_t digit)
 			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_C | SEG_D | SEG_E | SEG_F | SEG_G, GPIO_PIN_RESET);
 			break;
 		case 9:
-			HAL_GPIO_WritePin(GPIOA, SEG_E, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_E | SEG_PT, GPIO_PIN_SET);
 			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_C | SEG_D | SEG_F | SEG_G, GPIO_PIN_RESET);
 			break;
+		case 10:
+			HAL_GPIO_WritePin(GPIOA, SEG_D | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_B | SEG_C | SEG_E | SEG_F | SEG_G, GPIO_PIN_RESET);
+			break;
+		case 12:
+			HAL_GPIO_WritePin(GPIOA, SEG_B | SEG_C | SEG_G | SEG_PT, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOA, SEG_A | SEG_D | SEG_E | SEG_F, GPIO_PIN_RESET);
+			break;		
 		default:
 			HAL_GPIO_WritePin(GPIOA, DISP_7SEG, GPIO_PIN_SET);
 	}
 		
+}
+
+
+/**
+  * @brief App for practice pin outputs and inputs, when push the button on portA pin 0 the values on portC pin13 and pin14 toogle values
+  * @param None
+  * @retval None
+  */
+static void APP1(){
+	USR_GPIO_Init();
+	while(1)
+	{
+		/* App1 */
+		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
+		{
+			HAL_Delay(5);
+			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13|GPIO_PIN_14);
+		}
+
+	}
+}
+
+/**
+  * @brief Counter up / down from 0 - 9 showing in 7 segments display
+  * @param None
+  * @retval None
+  */
+static void APP2(){
+	/* Init app2 */
+	uint8_t counter = 0;
+	USR_GPIO_7Seg_Init(GPIOA, GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, GPIO_PIN_7);
+	USR_GPIO_Pushes_init(GPIOB, GPIO_PIN_3, GPIO_PIN_4);
+	while(1)
+	{
+
+		/* App2 */	
+		USR_Selchar_7seg(counter);
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3))
+		{
+			HAL_Delay(200);
+			if(counter >= 0 && counter < 9){
+				counter++;
+			}
+			else {
+				counter = 0;
+			}
+		}
+		else if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4))
+		{
+			HAL_Delay(200);
+			if(counter > 0 && counter <= 9){
+				counter--;
+			}
+			else {
+				counter = 9;
+			}
+		}
+
+		/*
+		HAL_Delay(1000);
+		if(counter < 10)
+		{
+			counter++;
+		} 
+		else
+		{
+			counter = 0;
+		}
+		*/
+		
+	}
+}
+
+/**
+  * @brief Trying 4 x 4 matrix keyboard showing in 7 segments display the key pushed
+  * @param None
+  * @retval None
+	* @note		
+  */
+static void APP3(){
+	
+	USR_GPIO_4x4Matrix_init(GPIOB, GPIO_PIN_12, GPIO_PIN_13, GPIO_PIN_14, GPIO_PIN_15, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6);
+	USR_GPIO_7Seg_Init(GPIOA, GPIO_PIN_0, GPIO_PIN_1, GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4, GPIO_PIN_5, GPIO_PIN_6, GPIO_PIN_7);
+	uint8_t button = 0;
+	USR_Selchar_7seg(button);
+	
+	while(1){
+		/* First column */
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 1){
+			USR_Selchar_7seg(1);
+		} else {
+			if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == 1){
+				USR_Selchar_7seg(4);
+			} else {
+				if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1){
+					USR_Selchar_7seg(7);
+				} else {
+					if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1){
+						USR_Selchar_7seg(16);
+					}
+				}
+			}
+		}
+		/* Second column */
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 1){
+			USR_Selchar_7seg(2);
+		} else {
+			if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == 1){
+				USR_Selchar_7seg(5);
+			} else {
+				if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1){
+					USR_Selchar_7seg(8);
+				} else {
+					if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1){
+						USR_Selchar_7seg(0);
+					}
+				}
+			}
+		}
+		/* Tirth column */
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 1){
+			USR_Selchar_7seg(3);
+		} else {
+			if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == 1){
+				USR_Selchar_7seg(6);
+			} else {
+				if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1){
+					USR_Selchar_7seg(9);
+				} else {
+					if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1){
+						USR_Selchar_7seg(16);
+					}
+				}
+			}
+		}
+		/* Fourth column */
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 1){
+			USR_Selchar_7seg(10);
+		} else {
+			if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == 1){
+				USR_Selchar_7seg(8);
+			} else {
+				if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == 1){
+					USR_Selchar_7seg(12);
+				} else {
+					if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1){
+						USR_Selchar_7seg(0);
+					}
+				}
+			}
+		}
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+		
+	}
+	
 }
 
 /**
