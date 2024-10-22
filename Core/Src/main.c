@@ -18,11 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "app_gpio_init.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "app_gpio_init.h"
+#include "app_lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -36,6 +36,19 @@
 #define  SEG_F					GPIO_PIN_5
 #define  SEG_G					GPIO_PIN_6
 #define  SEG_PT					GPIO_PIN_7
+/* Lcd control defines */
+#define  RS_DEF					GPIO_PIN_8
+#define  RW_DEF					GPIO_PIN_9
+#define  EN_DEF					GPIO_PIN_10
+/* Lcd data lines defines */
+#define  D0_DEF					GPIO_PIN_0
+#define  D1_DEF					GPIO_PIN_1
+#define  D2_DEF					GPIO_PIN_2
+#define  D3_DEF					GPIO_PIN_3
+#define  D4_DEF					GPIO_PIN_4
+#define  D5_DEF					GPIO_PIN_5
+#define  D6_DEF					GPIO_PIN_6
+#define  D7_DEF					GPIO_PIN_7
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -61,6 +74,8 @@ static void USR_Selchar_7seg(uint8_t digit);
 static void APP1();
 static void APP2();
 static void APP3();
+static void APP4();
+static void APP5();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -92,10 +107,12 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN 2 */
-	// App1();
+	// APP1();
 	// APP2();
-	APP3();
-  /* USER CODE END 2 */
+	// APP3();
+	// APP4();
+   APP5();
+	/* USER CODE END 2 */
 }
 
 /**
@@ -208,13 +225,18 @@ static void APP1(){
 	USR_GPIO_Init();
 	while(1)
 	{
-		/* App1 */
+		
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
+		HAL_Delay(500);
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 0);
+		HAL_Delay(500);
+		/* App1 
 		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0))
 		{
 			HAL_Delay(5);
 			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13|GPIO_PIN_14);
 		}
-
+		*/
 	}
 }
 
@@ -360,6 +382,71 @@ static void APP3(){
 	
 }
 
+/**
+  * @brief LCD
+  * @param None
+  * @retval None
+	* @note		
+  */
+static void APP4(){
+	
+	lcd_initialize_pins(GPIOA,RS_DEF,RW_DEF,EN_DEF,D0_DEF,D1_DEF,D2_DEF,D3_DEF,D4_DEF,D5_DEF,D6_DEF,D7_DEF);
+	HAL_GPIO_WritePin(GPIOA, D0_DEF|D1_DEF|D2_DEF|D3_DEF|D4_DEF|D5_DEF|D6_DEF|D7_DEF|RS_DEF|RW_DEF|EN_DEF, GPIO_PIN_RESET);
+	lcd_initialize(GPIOA,RS_DEF,RW_DEF,EN_DEF,D0_DEF,D1_DEF,D2_DEF,D3_DEF,D4_DEF,D5_DEF,D6_DEF,D7_DEF);
+	
+	while(1){
+		lcd_cmd(GPIOA, 0x80, RS_DEF,RW_DEF,EN_DEF,D0_DEF,D1_DEF,D2_DEF,D3_DEF,D4_DEF,D5_DEF,D6_DEF,D7_DEF);
+		//HAL_Delay(500);
+		lcd_data(GPIOA, 'A', RS_DEF,RW_DEF,EN_DEF,D0_DEF,D1_DEF,D2_DEF,D3_DEF,D4_DEF,D5_DEF,D6_DEF,D7_DEF);
+		//HAL_Delay(500);
+		lcd_data(GPIOA, 0xFF, RS_DEF,RW_DEF,EN_DEF,D0_DEF,D1_DEF,D2_DEF,D3_DEF,D4_DEF,D5_DEF,D6_DEF,D7_DEF);
+		//HAL_Delay(500);
+		//lcd_data(GPIOA, 'B', RS, RW, EN, D0, D1, D2, D3, D4, D5, D6, D7);
+		//HAL_Delay(500);
+		//lcd_data(GPIOA, 'C', RS, RW, EN, D0, D1, D2, D3, D4, D5, D6, D7);
+		//HAL_Delay(500);
+	}
+
+}
+
+/**
+  * @brief LCD
+  * @param None
+  * @retval None
+	* @note		
+  */
+static void APP5(){
+	
+	LCD_8BitMode_TypeDef lcd1 = {
+		.RS = RS_DEF,
+		.RW = RW_DEF,
+		.EN = EN_DEF,
+		.D0 = D0_DEF,
+		.D1 = D1_DEF,
+		.D2 = D2_DEF,
+		.D3 = D3_DEF,
+		.D4 = D4_DEF,
+		.D5 = D5_DEF,
+		.D6 = D6_DEF,
+		.D7 = D7_DEF,
+		.GPIOx = GPIOA
+	};
+	
+	LCD_Initialize_Port(&lcd1);
+	HAL_GPIO_WritePin(GPIOA, D0_DEF|D1_DEF|D2_DEF|D3_DEF|D4_DEF|D5_DEF|D6_DEF|D7_DEF|RS_DEF|RW_DEF|EN_DEF, GPIO_PIN_RESET);
+	LCD_Initialize(&lcd1);
+
+	
+	while(1){
+		
+		LCD_Cmd(0x80, &lcd1);
+		LCD_String("->  PRIMERA   <-", 16, &lcd1);
+		LCD_Cmd(0xC0, &lcd1);
+		LCD_String("->  SEGUNDA   <-", 16, &lcd1);
+
+	}
+	
+}
 /**
   * @brief GPIO Initialization Function
   * @param None

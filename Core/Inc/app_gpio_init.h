@@ -3,6 +3,8 @@
 
 #include "main.h"
 
+void Port_Clock_Initialize(GPIO_TypeDef *GPIOx);
+
 void USR_GPIO_Init(void);
 
 void USR_GPIO_7Seg_Init(GPIO_TypeDef *GPIOx, uint16_t SEG_A, uint16_t SEG_B, uint16_t SEG_C, uint16_t SEG_D, uint16_t SEG_E, uint16_t SEG_F, uint16_t SEG_G, uint16_t SEG_PT);
